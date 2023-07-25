@@ -1,0 +1,3 @@
+[submodule "RegistrationPipelineInference"]
+	path = RegistrationPipelineInference
+	url = https://github.com/grexai/RegistrationPipelineInference.git
