@@ -1,0 +1,11 @@
+*.exe
+*.pkg
+*.pt
+*.toc
+*.pyz
+*.pth
+*.pb
+models/*
+dist/*
+build/
+venv/

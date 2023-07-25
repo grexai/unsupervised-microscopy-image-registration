@@ -4,7 +4,7 @@
 block_cipher = None
 
 
-a = Analysis(['main.py', '__init__.py', 'ContrastiveUnpairedTranslation\\cut_functions.py', 'SuperPoint\\SuperpointFunctions.py'],
+a = Analysis(['run_pipeline.py', '__init__.py', 'ContrastiveUnpairedTranslation\\cut_funtions.py', 'SuperPoint\\SuperpointFunctions.py'],
              pathex=['.\\ContrastiveUnpairedTranslation\\', '.\\SuperPoint\\'],
              binaries=[],
              datas=[],
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,  
           [],
-          name='main',
+          name='run_pipeline',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
