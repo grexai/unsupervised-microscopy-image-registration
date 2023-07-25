@@ -5,7 +5,14 @@
 *.pyz
 *.pth
 *.pb
+checkpoints/
 models/*
 dist/*
 build/
 venv/
+SuperPoint/__pychache__/
+SuperPoint/exper/
+SuperPoint/notebooks/
+ContrastiveUnpairedTranslation/checkpoints/
+ContrastiveUnpairedTranslation/results/
+ContrastiveUnpairedTranslation/__pychache__/

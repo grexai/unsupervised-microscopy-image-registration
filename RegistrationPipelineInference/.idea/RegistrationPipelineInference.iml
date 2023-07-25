@@ -6,6 +6,9 @@
       <sourceFolder url="file://$MODULE_DIR$/SuperPoint" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/venv36" />
+      <excludeFolder url="file://$MODULE_DIR$/models/cut" />
+      <excludeFolder url="file://$MODULE_DIR$/models/sp" />
+      <excludeFolder url="file://$MODULE_DIR$/results/models/cut/cut_unaligned_resize/latest_net_G.pth" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (RegistrationPipelineInference)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

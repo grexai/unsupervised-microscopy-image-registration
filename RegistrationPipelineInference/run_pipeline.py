@@ -8,8 +8,6 @@ import sys
 sys.path.append(os.path.abspath("./ContrastiveUnpairedTranslation"))
 sys.path.append(os.path.abspath("./SuperPoint"))
 from PIL import Image
-print(sys.path)
-from SuperPoint.SuperpointFunctions import *
 from SuperPoint.SuperpointFunctions import *
 from ContrastiveUnpairedTranslation import cut_funtions, util
 import time
