@@ -1,0 +1,22 @@
+{
+    "train_images": "./datasets//train/trainA/",
+    "train_mask": "./datasets/train/trainB/",
+    "val_images": "./datasets/train/trainA/",
+    "val_mask": "./datasets//train/trainB/",
+    "test_images": "./datasets/test/testA/",
+    "test_mask": "/datasets/test/testB/",
+    "batch_size": 8,
+    "image_size": [256, 256],
+    "lr": 5e-3,
+    "n_epochs": 800,
+    "features": [
+        64,
+        128,
+        256,
+        512,
+        1024
+    ],
+    "load_pretrained": false,
+    "model_name": "outputmodel_name.pth.tar",
+    "comments": ""
+}

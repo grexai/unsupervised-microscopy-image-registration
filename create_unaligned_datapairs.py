@@ -36,6 +36,7 @@ y: 0.228
 0.853
 '''
 
+
 def crop_image(img1, img2, crop_size):
     height, width = img1.shape[0], img1.shape[1]
     dy, dx = crop_size

@@ -1,0 +1,22 @@
+{
+    "train_images": "./datasets/renal/splitted_bestf/train/aligned/trainA/",
+    "train_mask":"./datasets/renal/splitted_bestf/train/aligned/trainB/",
+    "val_images": "./datasets/renal/splitted_bestf/train/aligned/trainA/",
+    "val_mask": "./datasets/renal/splitted_bestf/train/aligned/trainB/",
+    "test_images": "./datasets/renal/splitted_bestf/test/testA/",
+    "test_mask": "./datasets/renal/splitted_bestf/test/testB/",
+    "batch_size": 8,
+    "image_size": [256, 256],
+    "lr": 1e-3,
+    "n_epochs": 800,
+    "features": [
+        64,
+        128,
+        256,
+        512,
+        1024
+    ],
+    "load_pretrained": false,
+    "model_name": "unet_model_256_renal_L1.pth.tar",
+    "comments": ""
+}

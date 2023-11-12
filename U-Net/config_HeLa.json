@@ -1,0 +1,22 @@
+{
+    "train_images": "./datasets//Image_registration/HeLa_60-63x/1f/Aligned/train/trainA/",
+    "train_mask": "./datasets/Image_registration/HeLa_60-63x/1f/Aligned/train/trainB/",
+    "val_images": "./datasets/Image_registration/HeLa_60-63x/1f/Aligned/train/trainA/",
+    "val_mask": "./datasets/Image_registration/HeLa_60-63x/1f/Aligned/train/trainB/",
+    "test_images": "./datasets/Image_registration/HeLa_60-63x/Aligned/test/testA/",
+    "test_mask": "./datasets/Image_registration/HeLa_60-63x/Aligned/test/testB/",
+    "batch_size": 8,
+    "image_size": [256, 256],
+    "lr": 5e-3,
+    "n_epochs": 800,
+    "features": [
+        64,
+        128,
+        256,
+        512,
+        1024
+    ],
+    "load_pretrained": false,
+    "model_name": "unet_model_256_L1.pth.tar",
+    "comments": ""
+}

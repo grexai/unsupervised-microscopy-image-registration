@@ -1,0 +1,22 @@
+{
+    "train_images": "/storage01/grexai/datasets/imgreg/Image_registration/dstrom/train/trainA/",
+    "train_mask": "/storage01/grexai/datasets/imgreg/Image_registration/dstrom/train/trainB/",
+    "val_images": "/storage01/grexai/datasets/imgreg/Image_registration/dstrom/train/trainA/",
+    "val_mask": "/storage01/grexai/datasets/imgreg/Image_registration/dstrom/train/trainB/",
+    "test_images": "/storage01/grexai/datasets/imgreg/Image_registration/dstrom/test/testA/",
+    "test_mask": "/storage01/grexai/datasets/imgreg/Image_registration/dstrom/test/testB/",
+    "batch_size": 8,
+    "image_size": [256, 256],
+    "lr": 1e-3,
+    "n_epochs": 800,
+    "features": [
+        64,
+        128,
+        256,
+        512,
+        1024
+    ],
+    "load_pretrained": false,
+    "model_name": "unet_model_256_dstorm_L1.pth.tar",
+    "comments": ""
+}

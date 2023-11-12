@@ -1,0 +1,22 @@
+{
+    "train_images": "./datasets/skin_tissue/train/trainA/",
+    "train_mask": "./datasets/skin_tissue/train/trainB/",
+    "val_images": "./datasets/skin_tissue/train/trainA/",
+    "val_mask": "./datasets/skin_tissue/train/trainB/",
+    "test_images": "./datasets/skin_tissue/test/trainA/",
+    "test_mask": "./datasets/skin_tissue/test/trainB/",
+    "batch_size": 8,
+    "image_size": [256, 256],
+    "lr": 1e-3,
+    "n_epochs": 800,
+    "features": [
+        64,
+        128,
+        256,
+        512,
+        1024
+    ],
+    "load_pretrained": true,
+    "model_name": "unet_model_256_skin_L1.pth.tar",
+    "comments": ""
+}
