@@ -27,8 +27,9 @@ Images can be forwarded with CLI to the pipeline which will return with a transf
 (see readme in the folder)
 
 #Models
+Models for CUT, SuperPoint, and U-Net can be downloaded at:
 
-[Zenodo link]
+https://zenodo.org/records/10108327
 
 
 #Citation
