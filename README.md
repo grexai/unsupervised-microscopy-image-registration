@@ -1,6 +1,6 @@
-# Unsupervised Microscopy image registration
+#Unsupervised Microscopy image registration
 
-Unaligned datset preprocessing for training
+##Unaligned datset preprocessing for training
   
 1. partition dataset with: partition_paired_dataset, this will split paired data into train and test folders
 
@@ -14,7 +14,7 @@ For evaluation and Supervised training
 4. The generated images can be forwared to U-Net training.
 See U-Net.
 
-For annotation
+##Annotation
 
 Use code from matlab_scripts/imreg_annotation.m
 There will be simple image reading procedures,
@@ -22,17 +22,19 @@ example of loading imagepairs into CP select tools,
 example of saving the landmark annotations,
 visualization codes to ovelay the aligned images for validation
 
+##Inference with SuperCUT
+
 Registrationpipelineinference folder contains the SuperCUT packaged into a single repository.
 Images can be forwarded with CLI to the pipeline which will return with a transformation matrix.
 (see readme in the folder)
 
-#Models
+##Models
 Models for CUT, SuperPoint, and U-Net can be downloaded at:
 
 https://zenodo.org/records/10108327
 
 
-#Citation
+##Citation
 If you use this repository please cite:
 
 {placeholder}
