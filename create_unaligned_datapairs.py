@@ -74,8 +74,8 @@ pathofannotation = pathreg+'annotation/'
 files = [f for f in listdir(pathofannotation) if isfile(join(pathofannotation, f))]
 # Save directories
 
-alignpathF = pathreg + 'notaligned_samescale_LMD/'
-alignpathM = pathreg + 'notaligned_samescale_bias/'
+alignpathF = pathreg + 'trainA/'
+alignpathM = pathreg + 'trainB/'
 
 # Create save directories
 if not path.exists(alignpathM):
