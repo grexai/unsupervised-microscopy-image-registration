@@ -83,8 +83,6 @@ if not path.exists(alignpathM):
 if not path.exists(alignpathF):
     mkdir(alignpathF)
 
-
-
 print("number of files to align:", len(files))
 nerror = 0
 count = 0

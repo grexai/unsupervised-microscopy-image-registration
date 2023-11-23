@@ -479,7 +479,7 @@ mindex = 1
 ecdf_arr = []
 # lgnd_arr = []
 ecdf_integral = []
-yes = 0
+masked = 0
 for stylemethod in style_methods:
     for regmethod in reg_methods:
         np_arr_arr.append(df.iloc[:, mindex].to_numpy())
@@ -494,7 +494,7 @@ for idx in range(len(np_arr_arr)):
         else:
             val = stats.wilcoxon(np_arr_arr[idx], np_arr_arr[jdx])[1]
 
-            if yes:
+            if masked:
                 if val < 0.05:
                     res_w[idx, jdx] = 1
                 if val < 0.01:

@@ -24,7 +24,7 @@ example of loading imagepairs into CP select tools,
 example of saving the landmark annotations,
 visualization codes to ovelay the aligned images for validation
 
-## Evaluation
+## Inference and Evaluation
 
 /ContrastiveUnpariedTranslation folder Cut_{dataset} jupyter notebook training scripts contains test runs
 The output folders of the test script should be added to SuperPoint/superpoint/calc_sp_sift_corr_{dataset}.py
