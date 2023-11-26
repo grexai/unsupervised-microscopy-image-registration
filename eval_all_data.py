@@ -409,8 +409,6 @@ import matplotlib.ticker as ticker
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
                                AutoMinorLocator)
 
-# vivi_colors = ['crimson', 'deepskyblue', 'magenta', 'navy', 'orange', 'limegreen', 'gray', 'chocolate', 'sienna']
-#  colors = vivi_colors
 plt.clf()
 fig = plt.figure()
 plt.rcParams['pdf.fonttype'] = 42
@@ -464,9 +462,6 @@ ax.grid(which='minor', axis='both', linestyle='-')
 ax.grid(which='major', axis='both', linestyle='-')
 ax.xaxis.set_major_locator(MultipleLocator(10))
 ax.xaxis.set_minor_formatter(FormatStrFormatter("%0.1f"))
-# ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
-# ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%5.f'))
-# plt.gca().xaxis.grid(True)
 
 plt.tight_layout()
 if save_highlight_ecdf:
@@ -526,7 +521,7 @@ sig_df = pd.DataFrame(res_w2)
 sig_df.to_csv(significance_name, float_format='%.5f')
 
 """
-NICE PLOT colors = style methods
+PLOT colors = style methods
 linestyles = registration methods
 """
 
@@ -542,7 +537,6 @@ fig = plt.figure()
 
 for plotidx in range(0, len(ecdf_arr), 3):
     print(*lgnd_arr[plotidx + 1], f'pix2pix_aligned and sp')
-    # if ', '.join(lgnd_arr[plotidx+1]) == 'pix2pix_aligned and sp' or ', '.join(lgnd_arr[plotidx+1]) == 'nostyle and sp' or ','.join(lgnd_arr[plotidx+1]) == 'cut_unaligned and sp':
     plt.plot(ecdf_arr[plotidx].x, ecdf_arr[plotidx].y * 100, c=colors[color_idx], linestyle='dotted',
              label=''.join(lgnd_arr[plotidx]), )
     plt.plot(ecdf_arr[plotidx + 1].x, ecdf_arr[plotidx + 1].y * 100, c=colors[color_idx], linestyle='dashed',
@@ -575,101 +569,3 @@ ax.xaxis.set_minor_formatter(FormatStrFormatter("%0.1f"))
 ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%5.f'))
 plt.tight_layout()
 plt.show()
-
-np_array1 = df.iloc[:, 1].to_numpy()
-np_array2 = df.iloc[:, 2].to_numpy()
-np_array3 = df.iloc[:, 3].to_numpy()
-np_array4 = df.iloc[:, 4].to_numpy()
-np_array5 = df.iloc[:, 5].to_numpy()
-np_array6 = df.iloc[:, 6].to_numpy()
-np_array7 = df.iloc[:, 7].to_numpy()
-np_array8 = df.iloc[:, 8].to_numpy()
-np_array9 = df.iloc[:, 9].to_numpy()
-
-# np_no_style_sift = df.iloc[:, 21].to_numpy()
-# np_no_style_sp = df.iloc[:, 20].to_numpy()
-# np_no_style_cor = df.iloc[:, 19].to_numpy()
-# np_cut_sp_a = df.iloc[:, 14].to_numpy()
-# np_cut_sp_ua = df.iloc[:, 17].to_numpy()
-# np_arrayunet = df.iloc[:, -2].to_numpy()
-
-print(len(np_array1))
-ecdf1 = ECDF(np_array1)
-ecdf8 = ECDF(np_array8)
-ecdf2 = ECDF(np_array2)
-ecdf3 = ECDF(np_array3)
-ecdf4 = ECDF(np_array4)
-ecdf5 = ECDF(np_array5)
-ecdf6 = ECDF(np_array6)
-ecdf7 = ECDF(np_array7)
-ecdf9 = ECDF(np_array9)
-# ecdfcuta = ECDF(np_cut_sp_a)
-# ecdfcutua = ECDF(np_cut_sp_ua)
-# ecdfunet = ECDF(np_arrayunet)
-# ecdf_no_style_cor = ECDF(np_no_style_cor)
-
-print(np_array8.shape)
-
-# x = np.linspace(min(np_array), max(np_array))
-
-from matplotlib.ticker import (FormatStrFormatter)
-from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
-                               AutoMinorLocator)
-
-# plt.plot(ecdf1.x, ecdf1.y, 'b', ecdf2.x, ecdf2.y,'b', ecdf3.x, ecdf3.y, 'b', ecdf4.x, ecdf4.y, 'r', ecdf5.x,
-# ecdf5.y,'r', ecdf6.x, ecdf6.y,'r', ecdf7.x,ecdf7.y,'g', ecdf8.x, ecdf8.y, 'g', ecdf9.x,ecdf9.y,'g') plt.plot(
-# ecdf1.x, ecdf1.y, 'r', ecdf2.x, ecdf2.y,'g', ecdf3.x, ecdf3.y, 'b', ecdf4.x, ecdf4.y, 'r', ecdf5.x, ecdf5.y,'g',
-# ecdf6.x, ecdf6.y,'b', ecdf7.x,ecdf7.y,'r', ecdf8.x, ecdf8.y, 'g', ecdf9.x,ecdf9.y,'b') plt.plot(ecdfcuta.x,
-# ecdfcuta.y, 'g', ecdfcutua.x, ecdfcutua.y, 'r', ecdfunet.x,ecdfunet.y,'y', ecdf8.x,ecdf8.y,'b', ecdf1.x, ecdf1.y,
-# ecdf_no_style_cor.x, ecdf_no_style_cor.y, 'c') plt.legend(['cut aligned superpoint', 'cut unaligned superpoint',
-# 'Unet sift', 'p2p superpoint', 'Comir correlation', 'No style correlation']) ax.legend(['cut unaligned',
-# 'cut unaligned'])
-plt.xlim(right=100)
-plt.xlim(left=5)
-# ax.xaxis.set_major_locator(MultipleLocator(10))
-plt.grid(linestyle='-', linewidth=1)
-plt.legend([])
-plt.show()
-
-#
-# for index in range(0,len(ecdf8.x),2):
-#     print(f"{ecdf8.y[index]} % p2p sp {ecdf8.x[index]}, Comir {ecdf1.x[index]} unet {ecdfunet.x[index]}")
-
-#  todo wilcoxon every row with every row
-res_w = stats.wilcoxon(np_array1, np_array9)
-# res_w = stats.wilcoxon(np_cut_sp_a, np_cut_sp_ua)
-print(f"wilcoxon {res_w}")
-
-# plt.plot(ecdf1.x, )
-plt.xscale('log')
-plt.ylabel('cummultative succes')
-plt.xlabel('error in pixels')
-ax = plt.axes()
-ax.xaxis.set_major_formatter(FormatStrFormatter('% 1.2f'))
-import matplotlib.ticker as ticker
-
-# ax.set_xticks(ax.get_xticks()[::2])
-ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.1f'))
-
-plt.xlim(right=100)
-plt.xlim(left=5)
-from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
-                               AutoMinorLocator)
-
-ax.xaxis.set_major_locator(MultipleLocator(10))
-plt.grid(linestyle='-', linewidth=1)
-
-plt.show()
-
-'''
-if write_error:
-    with open(csvname, 'w') as f:
-        write = csv.writer(f)
-        write.writerow(fname_arr)
-        write.writerow(avg_dist_error_array)
-if write_annotated:
-    with open(csvraw_data, 'w') as f:
-        write = csv.writer(f)
-        write.writerow(fname_arr)
-        write.writerow(angle_array)
-'''

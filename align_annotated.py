@@ -31,7 +31,7 @@ output_image_size = 1024
 # file extensions
 fix_extension = '.BMP'
 moving_extension = "png"
-# Generate visualization of cropsJ:\p1_wA
+
 plotgen = False
 small_crops_gen = True
 use_skiimage = False
@@ -61,7 +61,7 @@ if load_warped:
 else:
     pathofmoving = pathreg + 'registration/'
 # Save directories
-savepath = pathreg + 'res_boti/'
+savepath = pathreg + 'results/'
 alignpathF = pathreg + 'trainA/'
 alignpathM = pathreg + 'trainB/'
 
@@ -243,8 +243,8 @@ for idx in tqdm(range(len(annot))):
     if crops1024_gen:
         f_i_1024 = cv2.resize(img1[:1440, :1440, :], (output_image_size, output_image_size))
         m_i_1024 = cv2.resize(img2[:1440, :1440, :], (output_image_size, output_image_size))
-        cv2.imwrite(alignpathF + '1024crops/' + fname + f'_{focal_plane}.png', f_i_1024)
-        cv2.imwrite(alignpathM + '1024crops/' + fname + f'_{focal_plane}.png', m_i_1024)
+        cv2.imwrite(alignpathF + fname + f'_{focal_plane}.png', f_i_1024)
+        cv2.imwrite(alignpathM + fname + f'_{focal_plane}.png', m_i_1024)
 
     # cv2.imwrite(savepath+fname+'overlay.png', overlay)
 # cv2.imwrite(savepath + fname + 'skio.png', warped_moving)

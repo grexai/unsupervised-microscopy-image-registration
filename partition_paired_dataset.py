@@ -5,15 +5,13 @@ import random
 import shutil
 import os
 
+# select you dataset
+# path = './datasets/Image_registration/Renal_cancer_tissue/'
+# path = './datasets/Image_registration/Skin_tissue/'
+path = './datasets/Image_registration/HeLa/'
 
-path = 'f:/datasets/211109-HK-60x_120annot/'
 
-path = 'd:/datasets/Image_registration/211109-HK-60x/'
-
-# image_path = f'{path}squared/'
-# label_path = f'{path}labels/'
-
-fiximag_path = f'{path}LMD63x/'
+fiximag_path = f'{path}lmd63x/'
 moving_path = f'{path}registration/'
 annot_path = f'{path}annotations/'
 
@@ -52,7 +50,6 @@ random.seed(0)
 random.shuffle(files)
 n_files = len(files)
 n_training = 0.8 * n_files
-#n_val = 0.15 * n_files
 n_test = 0.2 * n_files
 
 for idx in tqdm(range(n_files)):
