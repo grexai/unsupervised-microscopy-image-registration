@@ -59,7 +59,7 @@ plotgen = False
 
 small_crops_gen = True
 # Paths: where annotation folder, fix image folder, moving image folder located
-pathreg = "d:/datasets/Image_registration/211109-HK-60x/splitted/train/"
+pathreg = "./datasets/Image_registration/HeLa/splitted/train/"
 
 
 # foldername of the fix images
@@ -82,6 +82,7 @@ if not path.exists(alignpathM):
     mkdir(alignpathM)
 if not path.exists(alignpathF):
     mkdir(alignpathF)
+
 
 print("number of files to align:", len(files))
 nerror = 0
