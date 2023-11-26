@@ -1,13 +1,13 @@
-#Unsupervised Microscopy image registration
+# Unsupervised Microscopy image registration
 
-##Unaligned datset preprocessing for training
+## Unaligned datset preprocessing for training
 
 1. Data should be partitioned partition_paired_dataset. If it is done before not necesarry to repeat.
 2. With matlab scale_annotated.m script to generate warped images that will be on the same scale as the fixed images.
 3. create_unaligned_datapairs.py will center crop the warped and the fixed images. 
 4. The generated images can be forwared to Contrastive Unparied training.
 
-##Aligned datset preprocessing for training
+## Aligned datset preprocessing for training
 
 For evaluation and Supervised training 
 1. Data should be partitioned partition_paired_dataset. If it is done before not necesarry to repeat.
@@ -16,7 +16,7 @@ For evaluation and Supervised training
 4. The generated images can be forwared to U-Net training.
 See /U-Net
 
-##Annotation
+## Annotation
 
 Use code from matlab_scripts/imreg_annotation.m
 There will be simple image reading procedures,
@@ -32,23 +32,21 @@ This script will try to align images, outputs result transformation into SuperPo
 The output of the scale_annotated.m mat files are containing the ground truth transformations in 2x3 format
 eval_all_data.py will read result and ground truth transformations and compare them.
 
-##Inference with SuperCUT
+## Inference with SuperCUT
 
 Registrationpipelineinference folder contains the SuperCUT packaged into a single repository.
 Images can be forwarded with CLI to the pipeline which will return with a transformation matrix.
 (see readme in the folder)
 
 
-##Models
+## Models
 
-Models for CUT, SuperPoint, and U-Net can be downloaded at:
 
 https://zenodo.org/records/10108327
 
 
-##Citation
 
-If you use this repository please cite:
+## Citation
 
 {placeholder}
 
