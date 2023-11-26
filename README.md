@@ -40,18 +40,20 @@ Images can be forwarded with CLI to the pipeline which will return with a transf
 
 
 ##Models
+
 Models for CUT, SuperPoint, and U-Net can be downloaded at:
 
 https://zenodo.org/records/10108327
 
 
 ##Citation
+
 If you use this repository please cite:
 
 {placeholder}
 
 
-This repository is based on these methods,
+This repository is based on these methods:
 
 @inproceedings{park2020cut,
   title={Contrastive Learning for Unpaired Image-to-Image Translation},
