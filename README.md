@@ -3,7 +3,7 @@
 
 ## Unaligned datset preprocessing for training
 
-1. Data should be partitioned partition_paired_dataset. If it is done before not necesarry to repeat.
+1. Data should be partitioned partition_paired_dataset. This will split the data  into train and test (80-20%  of the images).
 2. With matlab scale_annotated.m script to generate warped images that will be on the same scale as the fixed images.
 3. create_unaligned_datapairs.py will center crop the warped and the fixed images. 
 4. The generated images can be forwared to Contrastive Unparied training.
@@ -24,10 +24,11 @@ There will be simple image reading procedures,
 example of loading imagepairs into CP select tools,
 example of saving the landmark annotations,
 visualization codes to ovelay the aligned images for validation
-
+<br><br>
+Example landmark annotation:
+<br>
 <img src='images/annitation_example.png' align="right" width=960>
-
-
+<br><br>
 
 ## Inference and Evaluation
 
@@ -72,5 +73,3 @@ This repository is based on these methods:
   pages={224--236},
   year={2018}
 }
-
-
