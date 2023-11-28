@@ -27,12 +27,13 @@ visualization codes to ovelay the aligned images for validation
 <br><br>
 Example landmark annotation:
 <br>
+
 <img src='images/annitation_example.png' align="right" width=960>
 <br><br>
 
 ## Inference and Evaluation
 
-/ContrastiveUnpariedTranslation folder Cut_{dataset} jupyter notebook training scripts contains test runs
+/ContrastiveUnpariedTranslation folder Cut_{dataset} jupyter notebook training scripts contains test examples.
 The output folders of the test script should be added to SuperPoint/superpoint/calc_sp_sift_corr_{dataset}.py
 This script will try to align images, outputs result transformation into SuperPoint/superpoint/result/{experiment}
 The output of the scale_annotated.m mat files are containing the ground truth transformations in 2x3 format
