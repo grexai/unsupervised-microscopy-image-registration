@@ -28,8 +28,10 @@ visualization codes to ovelay the aligned images for validation
 Example landmark annotation:
 <br>
 
-<img src='images/annitation_example.png' align="right" width=960>
+<img src='images/annitation_example.png' align="right">
 <br><br>
+
+<br>
 
 ## Inference and Evaluation
 
