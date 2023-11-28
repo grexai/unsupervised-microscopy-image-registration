@@ -25,6 +25,10 @@ example of loading imagepairs into CP select tools,
 example of saving the landmark annotations,
 visualization codes to ovelay the aligned images for validation
 
+<img src='images/annitation_example.png' align="right" width=960>
+
+
+
 ## Inference and Evaluation
 
 /ContrastiveUnpariedTranslation folder Cut_{dataset} jupyter notebook training scripts contains test runs
