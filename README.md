@@ -21,7 +21,7 @@ See /U-Net
 
 Use code from matlab_scripts/imreg_annotation.m
 There will be simple image reading procedures,
-example of loading imagepairs into CP select tools,
+example of loading imagepairs into CPselect tool,
 example of saving the landmark annotations,
 visualization codes to ovelay the aligned images for validation
 <br><br>
