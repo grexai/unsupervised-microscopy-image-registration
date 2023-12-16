@@ -29,7 +29,7 @@ cpselect(M,F,movingPoints,fixedPoints)
 %tform = fitgeotrans(movingPoints,fixedPoints,'NonreflectiveSimilarity');
 %% homography transformation sear and distrotion added
 % min 4 points
-tform = fitgeotrans(movingPoints,fixedPoints,'projective')
+% tform = fitgeotrans(movingPoints,fixedPoints,'projective')
 % transform the image: if loaded from mat file (in this case regs.movingPoints, regs.fixedPoints)
 % tform = fitgeotrans(regs.movingPoints,regs.fixedPoints,'NonreflectiveSimilarity')
 %

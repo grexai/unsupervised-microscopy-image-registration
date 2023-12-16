@@ -1,5 +1,33 @@
 # Unsupervised Microscopy image registration
 
+#Install 
+
+## Python enviroment for data analysis
+
+Install python 3.6 <br>
+
+https://www.python.org/downloads/release/python-3614/
+
+Create a virtualenviroment, and activate:
+
+Run 
+
+```
+pip install -r requirments.txt
+
+```
+
+Matlab 2019b install version is required for annotation.
+<br>
+#### Note
+Landmark_application under development for python annotation.
+landmark_feature branch
+
+
+For /SuperPoint, /RegistrationPipelineInference, U-Net and ContrastiveUnpairedTranslation
+create a different virtial enviroment using the requirements in their folder.
+These subrepositories has their own README.md
+
 
 ## Unaligned datset preprocessing for training
 
@@ -13,7 +41,7 @@
 For evaluation and Supervised training 
 1. Data should be partitioned partition_paired_dataset. If it is done before not necesarry to repeat.
 2. With matlab align_annotated.m script to generate warped images.
-3. align_annotated_script will center crop the warped and the fixed images and remove black parts coming from warping. 
+3. align_annotated_script will align and the image pairs and remove black parts coming from warping.
 4. The generated images can be forwared to U-Net training.
 See /U-Net
 
@@ -24,14 +52,33 @@ There will be simple image reading procedures,
 example of loading imagepairs into CP select tools,
 example of saving the landmark annotations,
 visualization codes to ovelay the aligned images for validation
-<br><br>
+<br>
+<br>
 Example landmark annotation:
 <br>
+```
+% Moving image from the screening microscope
+M = imread("./datasets/HeLA/registration/p1_wA1_t1_m123_c0_z0_l1_o0.png");
 
-<img src='images/annitation_example.png' align="right">
-<br><br>
+% Fixed image from Leica LMD6 63x
+F = imread("./datasets/HeLA/lmd/p1_wA1_t1_m23_c1_z0_l1_o0_1.BMP");
 
+cpselect(M,F)
+```
 <br>
+<img src='images/annitation_example.png'>
+<br>
+<br>
+File/export controlpoints to workspace
+
+```
+% estimate the transformation using the control points
+tform = fitgeotrans(movingPoints,fixedPoints,'NonreflectiveSimilarity')
+% warp
+Jregistered = imwarp(M,tform,'OutputView',imreFd(size(F)));
+% visualize the aligment
+imshowpair(F,Jregistered, 'blend')
+```
 
 ## Inference and Evaluation
 
