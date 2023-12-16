@@ -58,8 +58,8 @@ class LandmarkPainter(QWidget):
     def load_image_pair(self):
         # Replace these paths with your image pair paths
 
-        image_path_1 = "d:/datasets/Image_registration/211109-HK-60x/registration/p1_wA1_t1_m1_c1_z0_l1_o0.png"
-        image_path_2 = "d:/datasets/Image_registration/211109-HK-60x/LMD63x/p1_wA1_t1_m1_c1_z0_l1_o0_1.BMP"
+        image_path_2 = "d:/datasets/Image_registration/211109-HK-60x/registration/p1_wA1_t1_m1_c1_z0_l1_o0.png"
+        image_path_1 = "d:/datasets/Image_registration/211109-HK-60x/LMD63x/p1_wA1_t1_m1_c1_z0_l1_o0_1.BMP"
 
         # Load the images
         self.image_1 = QImage(image_path_1)
@@ -141,7 +141,7 @@ class LandmarkPainter(QWidget):
         self.scene.addItem(landmark_item)
 
         # Add a label indicating the index of the landmark with a small box
-        label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 15, 20, 15, QPen(),
+        label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 10, 30, 20, QPen(),
                                         QBrush(Qt.white))
         label = self.scene.addText(f"{image_index}.{len(self.landmarks[f'image{image_index}'])}")
         label.setPos(position.x() - radius / 2 + 3, position.y() - radius / 2 - 11)
@@ -184,6 +184,10 @@ class OverlayWindow(QWidget):
             # Ensure the cropped image has an alpha channel
             if image_2.hasAlphaChannel():
                 array_2_cropped = cv2.cvtColor(array_2_cropped, cv2.COLOR_RGB2RGBA)
+
+            # Resize the second image to match the dimensions of the first image
+            array_2_resized = cv2.resize(array_2_cropped, (array_1_rgb.shape[1], array_1_rgb.shape[0]))
+
             # Convert dictionaries to np.float32 array
             landmarks_image1_array = np.array([[point['x'], point['y']] for point in landmarks_image1],
                                               dtype=np.float32)
@@ -192,26 +196,35 @@ class OverlayWindow(QWidget):
             min_len = min(len(landmarks_image1_array), len(landmarks_image2_array))
 
             # Estimate affine transformation using the smaller array
-            M, _ = cv2.estimateAffine2D(landmarks_image1_array[:min_len], landmarks_image2_array[:min_len],
+            M, _ = cv2.estimateAffine2D(landmarks_image2_array[:min_len], landmarks_image1_array[:min_len],
                                         method=cv2.LMEDS)
 
             # Apply the transformation to image_2
-            rows, cols, _ = array_2_cropped.shape
-            array_2_transformed = cv2.warpAffine(array_2_cropped, M, (cols, rows))
+            rows, cols, _ = array_2_resized.shape
+            array_2_transformed = cv2.warpAffine(array_2_resized, M, (cols, rows))
+
+            print(f"array_1_rgb.shape: {array_1_rgb.shape}")
+            print(f"array_2_transformed.shape: {array_2_transformed.shape}")
+
+            # Remove alpha channel if present in array_2_transformed
+            array_2_transformed_rgb = array_2_transformed[:, :, :3]
 
             # Blend the images using alpha
-            result_array = cv2.addWeighted(array_1_rgb, 1 - alpha, array_2_transformed, alpha, 0)
-
+            result_array = cv2.addWeighted(array_1_rgb, 1 - alpha, array_2_transformed_rgb, alpha, 0)
+            print("result_array.shape:", result_array.shape)
             # Create a QPixmap from the combined NumPy array
+            # combined_pixmap = QPixmap.fromImage(
+            #     QImage(result_array.data, result_array.shape[1], result_array.shape[0],
+            #            result_array.shape[1] * result_array.shape[2],
+            #            QImage.Format_RGB888 if not image_2.hasAlphaChannel() else QImage.Format_RGBA8888)
+            # )
             combined_pixmap = QPixmap.fromImage(
                 QImage(result_array.data, result_array.shape[1], result_array.shape[0],
-                       result_array.shape[1] * result_array.shape[2],
-                       QImage.Format_RGB888 if not image_2.hasAlphaChannel() else QImage.Format_RGBA8888)
+                       result_array.shape[1] * result_array.shape[2], QImage.Format_RGB888)
             )
 
             # Set the image to the QLabel widget
             self.image_label.setPixmap(combined_pixmap)
-
 
     def qimage_to_numpy(self, qimage):
         width = qimage.width()
