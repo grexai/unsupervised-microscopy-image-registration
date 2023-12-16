@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+
 from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QVBoxLayout, QWidget, \
     QPushButton, QLabel, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush, QTransform
@@ -96,11 +97,11 @@ class LandmarkPainter(QWidget):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            # Get the position of the click in the QGraphicsView
-            pos_in_view = event.pos()
+            # Map the mouse position to scene coordinates
+            pos_in_scene = self.view.mapToScene(event.pos())
 
             # Draw a point on the image and store the landmark
-            self.draw_landmark(pos_in_view)
+            self.draw_landmark(pos_in_scene)
 
     def draw_landmark(self, position):
         # Set the color and size for the landmarks
@@ -113,9 +114,10 @@ class LandmarkPainter(QWidget):
         # Determine which image the landmark belongs to
         if position.x() < image_1_width:
             # Landmark is in the first image
+            image_index = 1
             landmark_item = self.scene.addEllipse(
-                position.x(),
-                position.y(),
+                position.x() - radius / 2,
+                position.y() - radius / 2,
                 radius,
                 radius,
                 QPen(color),
@@ -124,9 +126,10 @@ class LandmarkPainter(QWidget):
             self.landmarks['image1'].append({'x': position.x(), 'y': position.y()})
         else:
             # Landmark is in the second image
+            image_index = 2
             landmark_item = self.scene.addEllipse(
-                position.x(),
-                position.y(),
+                position.x() - radius / 2,
+                position.y() - radius / 2,
                 radius,
                 radius,
                 QPen(color),
@@ -137,14 +140,20 @@ class LandmarkPainter(QWidget):
         # Store the landmark position
         self.scene.addItem(landmark_item)
 
+        # Add a label indicating the index of the landmark with a small box
+        label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 15, 20, 15, QPen(),
+                                        QBrush(Qt.white))
+        label = self.scene.addText(f"{image_index}.{len(self.landmarks[f'image{image_index}'])}")
+        label.setPos(position.x() - radius / 2 + 3, position.y() - radius / 2 - 11)
+
     def show_overlay_window(self):
         # Create an OverlayWindow instance if it doesn't exist
         if not self.overlay_window:
             self.overlay_window = OverlayWindow()
 
-        overlay_window = OverlayWindow()
-        overlay_window.set_images_with_landmarks(self.image_1, self.image_2, self.landmarks)
-        overlay_window.show()
+        # Use the existing instance
+        self.overlay_window.set_images_with_landmarks(self.image_1, self.image_2, self.landmarks)
+        self.overlay_window.show()
 
 
 
@@ -175,9 +184,16 @@ class OverlayWindow(QWidget):
             # Ensure the cropped image has an alpha channel
             if image_2.hasAlphaChannel():
                 array_2_cropped = cv2.cvtColor(array_2_cropped, cv2.COLOR_RGB2RGBA)
+            # Convert dictionaries to np.float32 array
+            landmarks_image1_array = np.array([[point['x'], point['y']] for point in landmarks_image1],
+                                              dtype=np.float32)
+            landmarks_image2_array = np.array([[point['x'], point['y']] for point in landmarks_image2],
+                                              dtype=np.float32)
+            min_len = min(len(landmarks_image1_array), len(landmarks_image2_array))
 
-            # Estimate an affine transformation matrix
-            M, _ = cv2.estimateAffine2D(np.array(landmarks_image1), np.array(landmarks_image2), method=cv2.LMEDS)
+            # Estimate affine transformation using the smaller array
+            M, _ = cv2.estimateAffine2D(landmarks_image1_array[:min_len], landmarks_image2_array[:min_len],
+                                        method=cv2.LMEDS)
 
             # Apply the transformation to image_2
             rows, cols, _ = array_2_cropped.shape
@@ -196,15 +212,16 @@ class OverlayWindow(QWidget):
             # Set the image to the QLabel widget
             self.image_label.setPixmap(combined_pixmap)
 
-    def qimage_to_numpy(self, incomingImage):
-        '''
-         Converts a QImage into an opencv MAT format
-        '''
-        incomingImage = incomingImage.convertToFormat(QImage.Format.Format_RGB32)
-        width = incomingImage.width()
-        height = incomingImage.height()
-        ptr = incomingImage.constBits()
-        arr = np.array(ptr).reshape(height, width, 4)  # Copies the data
+
+    def qimage_to_numpy(self, qimage):
+        width = qimage.width()
+        height = qimage.height()
+
+        # Get the image data
+        ptr = qimage.bits()
+        ptr.setsize(qimage.byteCount())
+        arr = np.array(ptr).reshape(height, width, 4)  # 4 channels (RGBA)
+
         return arr
 
 
