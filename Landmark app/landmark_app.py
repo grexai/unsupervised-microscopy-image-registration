@@ -1,5 +1,4 @@
 import sys
-import numpy as np
 
 from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QVBoxLayout, QWidget, \
     QPushButton, QLabel, QHBoxLayout
@@ -11,7 +10,57 @@ import io
 import cv2
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import QByteArray
+from PyQt5.QtWidgets import (
+    QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
+    QVBoxLayout, QWidget, QPushButton, QLabel, QHBoxLayout, QFileDialog
+)
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFileDialog, QDialog
+
+
+class ImageSelectDialog(QDialog):
+    def __init__(self):
+        super(ImageSelectDialog, self).__init__()
+
+        self.selected_images = []
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        # Add a button to select the first image
+        button_1 = QPushButton("Select Image 1")
+        button_1.clicked.connect(self.select_image_1)
+        layout.addWidget(button_1)
+
+        # Add a button to select the second image
+        button_2 = QPushButton("Select Image 2")
+        button_2.clicked.connect(self.select_image_2)
+        layout.addWidget(button_2)
+
+        # Add a button to confirm the selection
+        confirm_button = QPushButton("OK")
+        confirm_button.clicked.connect(self.accept)
+        layout.addWidget(confirm_button)
+
+        self.setLayout(layout)
+
+    def select_image_1(self):
+        image_path, _ = QFileDialog.getOpenFileName(self, "Select Image 1", "", "Images (*.png *.jpg *.bmp)")
+        if image_path:
+            self.selected_images.append(image_path)
+
+    def select_image_2(self):
+        image_path, _ = QFileDialog.getOpenFileName(self, "Select Image 2", "", "Images (*.png *.jpg *.bmp)")
+        if image_path:
+            self.selected_images.append(image_path)
+
+    def get_selected_images(self):
+        return tuple(self.selected_images)
 
 
 class LandmarkPainter(QWidget):
@@ -31,35 +80,66 @@ class LandmarkPainter(QWidget):
 
         self.landmarks = {'image1': [], 'image2': []}  # Dictionary to store landmarks for both images
 
+
         # Set up the UI
         self.setup_ui()
 
     def setup_ui(self):
-        # Create a layout for the main window
-        layout = QVBoxLayout(self)
+        # Create a QVBoxLayout for the main widget
+        main_layout = QHBoxLayout(self)
 
-        # Load the image pair
-        self.load_image_pair()
+        # Create a QVBoxLayout for the image view and buttons
+        image_layout = QVBoxLayout()
 
-        # Create a button to save landmarks
-        save_button = QPushButton("Save Landmarks")
-        save_button.clicked.connect(self.save_landmarks)
-        # Create a button to open the overlay window
-        overlay_button = QPushButton("Overlay Images")
-        overlay_button.clicked.connect(self.show_overlay_window)
+        button_select_images = QPushButton("Open Images")
+        button_select_images.clicked.connect(self.show_image_select_dialog)
 
-        layout.addWidget(self.view)
-        layout.addWidget(save_button)
-        layout.addWidget(overlay_button)
+        button_save_landmarks = QPushButton("Save Landmarks")
+        button_save_landmarks.clicked.connect(self.save_landmarks)
 
+        button_overlay_images = QPushButton("Overlay Images")
+        button_overlay_images.clicked.connect(self.show_overlay_window)
+
+        # Add buttons to the image layout
+        image_layout.addWidget(self.view)
+        image_layout.addWidget(button_select_images)
+        image_layout.addWidget(button_save_landmarks)
+        image_layout.addWidget(button_overlay_images)
+
+        # Add the image layout to the main layout
+        main_layout.addLayout(image_layout)
+
+        # Create a QVBoxLayout for the list widget
+        list_layout = QVBoxLayout()
+
+        # Add a label to the list layout
+        list_layout.addWidget(QLabel("Landmark Points:"))
+
+        # Add a QListWidget to the list layout
+        self.landmark_list_widget = QListWidget()
+
+        self.landmark_list_widget.setFixedWidth(200)
+        list_layout.addWidget(self.landmark_list_widget)
+
+        # Add the list layout to the main layout
+        main_layout.addLayout(list_layout)
         # Set the layout for the main window
         self.setWindowTitle("Landmark Painter")
+        self.setFixedSize(1480, 720)
 
-    def load_image_pair(self):
-        # Replace these paths with your image pair paths
+    def show_image_select_dialog(self):
+        # Create an instance of the ImageSelectDialog
+        image_select_dialog = ImageSelectDialog()
 
-        image_path_2 = "d:/datasets/Image_registration/211109-HK-60x/registration/p1_wA1_t1_m1_c1_z0_l1_o0.png"
-        image_path_1 = "d:/datasets/Image_registration/211109-HK-60x/LMD63x/p1_wA1_t1_m1_c1_z0_l1_o0_1.BMP"
+        # Check if the user pressed OK
+        if image_select_dialog.exec_() == QDialog.Accepted:
+            # Get the selected image paths
+            image_path_1, image_path_2 = image_select_dialog.get_selected_images()
+
+            # Load the selected images
+            self.load_images(image_path_1, image_path_2)
+
+    def load_images(self, image_path_1, image_path_2):
 
         # Load the images
         self.image_1 = QImage(image_path_1)
@@ -106,7 +186,8 @@ class LandmarkPainter(QWidget):
     def draw_landmark(self, position):
         # Set the color and size for the landmarks
         color = QColor(255, 0, 0)  # Red
-        radius = 3
+        radius = 5
+        # Convert mouse position to scene coordinates
 
         # Get the width of the first image
         image_1_width = self.image1_dims[0]
@@ -116,8 +197,8 @@ class LandmarkPainter(QWidget):
             # Landmark is in the first image
             image_index = 1
             landmark_item = self.scene.addEllipse(
-                position.x() - radius / 2,
-                position.y() - radius / 2,
+                position.x(),
+                position.y(),
                 radius,
                 radius,
                 QPen(color),
@@ -128,8 +209,8 @@ class LandmarkPainter(QWidget):
             # Landmark is in the second image
             image_index = 2
             landmark_item = self.scene.addEllipse(
-                position.x() - radius / 2,
-                position.y() - radius / 2,
+                position.x(),
+                position.y(),
                 radius,
                 radius,
                 QPen(color),
@@ -141,10 +222,25 @@ class LandmarkPainter(QWidget):
         self.scene.addItem(landmark_item)
 
         # Add a label indicating the index of the landmark with a small box
-        label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 10, 30, 20, QPen(),
-                                        QBrush(Qt.white))
+        # label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 10, 30, 20, QPen(),
+        #                                QBrush(Qt.white))
         label = self.scene.addText(f"{image_index}.{len(self.landmarks[f'image{image_index}'])}")
-        label.setPos(position.x() - radius / 2 + 3, position.y() - radius / 2 - 11)
+        # label.setPos(position.x() - radius / 2 + 3, position.y() - radius / 2 - 11)
+        self.update_landmark_list()
+
+    def update_landmark_list(self):
+        # Clear the existing items in the list widget
+        self.landmark_list_widget.clear()
+
+        # Add landmark points for image 1
+        for i, point in enumerate(self.landmarks['image1']):
+            item = QListWidgetItem(f"Image 1 - Point {i + 1}: ({point['x']}, {point['y']})")
+            self.landmark_list_widget.addItem(item)
+
+        # Add landmark points for image 2
+        for i, point in enumerate(self.landmarks['image2']):
+            item = QListWidgetItem(f"Image 2 - Point {i + 1}: ({point['x']}, {point['y']})")
+            self.landmark_list_widget.addItem(item)
 
     def show_overlay_window(self):
         # Create an OverlayWindow instance if it doesn't exist
@@ -156,7 +252,6 @@ class LandmarkPainter(QWidget):
         self.overlay_window.show()
 
 
-
 class OverlayWindow(QWidget):
     def __init__(self, parent=None):
         super(OverlayWindow, self).__init__(parent)
@@ -164,67 +259,68 @@ class OverlayWindow(QWidget):
         layout = QVBoxLayout(self)
         layout.addWidget(self.image_label)
         self.setWindowTitle("Image Overlay")
+        self.setFixedSize(1280, 720)
 
     def set_images_with_landmarks(self, image_1, image_2, landmarks_data, alpha=0.5):
-        if image_1 and image_2 and landmarks_data:
+        if image_1 and image_2:
             landmarks_image1 = landmarks_data.get('image1', [])
             landmarks_image2 = landmarks_data.get('image2', [])
+            if len(landmarks_image1) > 3 and len(landmarks_image2) > 3:
+                # Convert QImages to NumPy arrays
+                array_1 = self.qimage_to_numpy(image_1)
+                array_2 = self.qimage_to_numpy(image_2)
 
-            # Convert QImages to NumPy arrays
-            array_1 = self.qimage_to_numpy(image_1)
-            array_2 = self.qimage_to_numpy(image_2)
+                # Ensure arrays are in RGB format
+                array_1_rgb = cv2.cvtColor(array_1, cv2.COLOR_BGR2RGB)
+                array_2_rgb = cv2.cvtColor(array_2, cv2.COLOR_BGR2RGB)
 
-            # Ensure arrays are in RGB format
-            array_1_rgb = cv2.cvtColor(array_1, cv2.COLOR_BGR2RGB)
-            array_2_rgb = cv2.cvtColor(array_2, cv2.COLOR_BGR2RGB)
+                # Crop the second image to the size of the first image
+                array_2_cropped = array_2_rgb[:array_1_rgb.shape[0], :array_1_rgb.shape[1]]
 
-            # Crop the second image to the size of the first image
-            array_2_cropped = array_2_rgb[:array_1_rgb.shape[0], :array_1_rgb.shape[1]]
+                # Ensure the cropped image has an alpha channel
+                if image_2.hasAlphaChannel():
+                    array_2_cropped = cv2.cvtColor(array_2_cropped, cv2.COLOR_RGB2RGBA)
 
-            # Ensure the cropped image has an alpha channel
-            if image_2.hasAlphaChannel():
-                array_2_cropped = cv2.cvtColor(array_2_cropped, cv2.COLOR_RGB2RGBA)
+                # Resize the second image to match the dimensions of the first image
+                array_2_resized = cv2.resize(array_2_cropped, (array_1_rgb.shape[1], array_1_rgb.shape[0]))
 
-            # Resize the second image to match the dimensions of the first image
-            array_2_resized = cv2.resize(array_2_cropped, (array_1_rgb.shape[1], array_1_rgb.shape[0]))
+                # Convert dictionaries to np.float32 array
+                landmarks_image1_array = np.array([[point['x'], point['y']] for point in landmarks_image1],
+                                                  dtype=np.float32)
+                landmarks_image2_array = np.array([[point['x'], point['y']] for point in landmarks_image2],
+                                                  dtype=np.float32)
+                min_len = min(len(landmarks_image1_array), len(landmarks_image2_array))
 
-            # Convert dictionaries to np.float32 array
-            landmarks_image1_array = np.array([[point['x'], point['y']] for point in landmarks_image1],
-                                              dtype=np.float32)
-            landmarks_image2_array = np.array([[point['x'], point['y']] for point in landmarks_image2],
-                                              dtype=np.float32)
-            min_len = min(len(landmarks_image1_array), len(landmarks_image2_array))
+                # Estimate affine transformation using the smaller array
+                M, _ = cv2.estimateAffine2D(landmarks_image2_array[:min_len], landmarks_image1_array[:min_len],
+                                            method=cv2.LMEDS)
 
-            # Estimate affine transformation using the smaller array
-            M, _ = cv2.estimateAffine2D(landmarks_image2_array[:min_len], landmarks_image1_array[:min_len],
-                                        method=cv2.LMEDS)
+                # Apply the transformation to image_2
+                rows, cols, _ = array_2_resized.shape
+                array_2_transformed = cv2.warpAffine(array_2_resized, M, (cols, rows))
 
-            # Apply the transformation to image_2
-            rows, cols, _ = array_2_resized.shape
-            array_2_transformed = cv2.warpAffine(array_2_resized, M, (cols, rows))
+                print(f"array_1_rgb.shape: {array_1_rgb.shape}")
+                print(f"array_2_transformed.shape: {array_2_transformed.shape}")
 
-            print(f"array_1_rgb.shape: {array_1_rgb.shape}")
-            print(f"array_2_transformed.shape: {array_2_transformed.shape}")
+                # Remove alpha channel if present in array_2_transformed
+                array_2_transformed_rgb = array_2_transformed[:, :, :3]
 
-            # Remove alpha channel if present in array_2_transformed
-            array_2_transformed_rgb = array_2_transformed[:, :, :3]
+                # Blend the images using alpha
+                result_array = cv2.addWeighted(array_1_rgb, 1 - alpha, array_2_transformed_rgb, alpha, 0)
+                print("result_array.shape:", result_array.shape)
+                # Create a QPixmap from the combined NumPy array
+                # combined_pixmap = QPixmap.fromImage(
+                #     QImage(result_array.data, result_array.shape[1], result_array.shape[0],
+                #            result_array.shape[1] * result_array.shape[2],
+                #            QImage.Format_RGB888 if not image_2.hasAlphaChannel() else QImage.Format_RGBA8888)
+                # )
+                combined_pixmap = QPixmap.fromImage(
+                    QImage(result_array.data, result_array.shape[1], result_array.shape[0],
+                           result_array.shape[1] * result_array.shape[2], QImage.Format_RGB888)
+                )
 
-            # Blend the images using alpha
-            result_array = cv2.addWeighted(array_1_rgb, 1 - alpha, array_2_transformed_rgb, alpha, 0)
-            print("result_array.shape:", result_array.shape)
-            # Create a QPixmap from the combined NumPy array
-            # combined_pixmap = QPixmap.fromImage(
-            #     QImage(result_array.data, result_array.shape[1], result_array.shape[0],
-            #            result_array.shape[1] * result_array.shape[2],
-            #            QImage.Format_RGB888 if not image_2.hasAlphaChannel() else QImage.Format_RGBA8888)
-            # )
-            combined_pixmap = QPixmap.fromImage(
-                QImage(result_array.data, result_array.shape[1], result_array.shape[0],
-                       result_array.shape[1] * result_array.shape[2], QImage.Format_RGB888)
-            )
-
-            # Set the image to the QLabel widget
-            self.image_label.setPixmap(combined_pixmap)
+                # Set the image to the QLabel widget
+                self.image_label.setPixmap(combined_pixmap)
 
     def qimage_to_numpy(self, qimage):
         width = qimage.width()
@@ -238,12 +334,8 @@ class OverlayWindow(QWidget):
         return arr
 
 
-def main():
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = LandmarkPainter()
     window.show()
     sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()
