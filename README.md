@@ -1,6 +1,6 @@
 # Unsupervised Microscopy image registration
 
-#Install 
+# Install 
 
 ## Python enviroment for data analysis
 
@@ -21,17 +21,18 @@ Matlab 2019b install version is required for annotation.
 <br>
 #### Note
 Landmark_application under development for python annotation.
-landmark_feature branch
+This application is designed to replace matlab's control point selection tool.
+Check it out on landmark_feature branch
 
 
-For /SuperPoint, /RegistrationPipelineInference, U-Net and ContrastiveUnpairedTranslation
-create a different virtial enviroment using the requirements in their folder.
+For /SuperPoint, /SuperCUT, /U-Net and /ContrastiveUnpairedTranslation
+
+It is suggested to create a different virtial enviroment using the requirements in their folder.
 These subrepositories has their own README.md
-
 
 ## Unaligned datset preprocessing for training
 
-1. Data should be partitioned partition_paired_dataset. This will split the data  into train and test (80-20%  of the images).
+1. Data should be partitioned partition_paired_dataset.py. This will split the data  into train and test (80-20%  of the images).
 2. With matlab scale_annotated.m script to generate warped images that will be on the same scale as the fixed images.
 3. create_unaligned_datapairs.py will center crop the warped and the fixed images. 
 4. The generated images can be forwared to Contrastive Unparied training.
@@ -39,7 +40,7 @@ These subrepositories has their own README.md
 ## Aligned datset preprocessing for training
 
 For evaluation and Supervised training 
-1. Data should be partitioned partition_paired_dataset. If it is done before not necesarry to repeat.
+1. Data should be partitioned partition_paired_dataset.py. If it is done before not necesarry to repeat.
 2. With matlab align_annotated.m script to generate warped images.
 3. align_annotated_script will align and the image pairs and remove black parts coming from warping.
 4. The generated images can be forwared to U-Net training.
@@ -85,7 +86,7 @@ imshowpair(F,Jregistered, 'blend')
 /ContrastiveUnpariedTranslation folder Cut_{dataset} jupyter notebook training scripts contains test examples.
 The output folders of the test script should be added to SuperPoint/superpoint/calc_sp_sift_corr_{dataset}.py
 This script will try to align images, outputs result transformation into SuperPoint/superpoint/result/{experiment}
-The output of the scale_annotated.m mat files are containing the ground truth transformations in 2x3 format
+The output of the scale_annotated.m mat files contains the ground truth transformations in 2x3 format
 eval_all_data.py will read result and ground truth transformations and compare them.
 
 ## Inference with SuperCUT
