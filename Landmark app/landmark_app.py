@@ -1,25 +1,15 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QVBoxLayout, QWidget, \
-    QPushButton, QLabel, QHBoxLayout
-from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush, QTransform
-from PyQt5.QtCore import Qt, QBuffer, QIODevice
-import numpy as np
-from PIL import Image
-import io
 import cv2
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
-from PyQt5.QtGui import QPixmap, QImage
+import numpy as np
+from PyQt5.QtCore import Qt, QPointF
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush
 from PyQt5.QtWidgets import (
     QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
-    QVBoxLayout, QWidget, QPushButton, QLabel, QHBoxLayout, QFileDialog
+    QVBoxLayout, QWidget, QPushButton, QLabel, QHBoxLayout, QSizeGrip,QMessageBox
 )
-from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem
-from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen, QBrush
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QDialog
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 
 
 class ImageSelectDialog(QDialog):
@@ -80,7 +70,6 @@ class LandmarkPainter(QWidget):
 
         self.landmarks = {'image1': [], 'image2': []}  # Dictionary to store landmarks for both images
 
-
         # Set up the UI
         self.setup_ui()
 
@@ -106,6 +95,12 @@ class LandmarkPainter(QWidget):
         image_layout.addWidget(button_save_landmarks)
         image_layout.addWidget(button_overlay_images)
 
+        # Create buttons for point operations
+        button_remove_point = QPushButton("Remove Selected Point")
+        button_remove_point.clicked.connect(self.remove_selected_point)
+
+        # Add the point operation buttons to the image layout
+        image_layout.addWidget(button_remove_point)
         # Add the image layout to the main layout
         main_layout.addLayout(image_layout)
 
@@ -126,6 +121,55 @@ class LandmarkPainter(QWidget):
         # Set the layout for the main window
         self.setWindowTitle("Landmark Painter")
         self.setFixedSize(1480, 720)
+
+    def remove_selected_point(self):
+        selected_items = self.landmark_list_widget.selectedItems()
+
+        for item in selected_items:
+            index = self.landmark_list_widget.row(item)
+            image_index, point_index = self.get_point_info_from_list_index(index)
+
+
+            # Remove the point from the landmarks dictionary
+            if image_index in self.landmarks and point_index < len(self.landmarks[image_index]):
+                del self.landmarks[image_index][point_index]
+
+            # Remove the item from the list widget
+            self.landmark_list_widget.takeItem(index)
+
+
+        # Update the scene with the modified landmarks
+        self.update_scene()
+
+    def get_point_info_from_list_index(self, index):
+        # Extract image and point indices from the list index
+        if index < len(self.landmarks['image1']):
+            return 'image1', index
+        else:
+            return 'image2', index - len(self.landmarks['image1'])
+
+    def update_scene(self):
+        # Clear the scene
+        # self.scene.clear()
+
+        # Create new QGraphicsPixmapItems with the original images
+        # if self.image_item_1.pixmap() is not None:
+        #     image_item_1_copy = QGraphicsPixmapItem(self.image_item_1.pixmap())
+        #     self.scene.addItem(image_item_1_copy)
+        #
+        # if self.image_item_2.pixmap() is not None:
+        #     image_item_2_copy = QGraphicsPixmapItem(self.image_item_2.pixmap())
+        #     self.scene.addItem(image_item_2_copy)
+
+        # Draw the existing landmarks
+        for image_index, points in self.landmarks.items():
+
+            for point in points:
+                if image_index == 2:
+                    x = point['x'] + self.image1_dims[0]
+                else:
+                    x = point['x']
+                self.draw_landmark(QPointF(x, point['y']),redraw=True)
 
     def show_image_select_dialog(self):
         # Create an instance of the ImageSelectDialog
@@ -183,50 +227,56 @@ class LandmarkPainter(QWidget):
             # Draw a point on the image and store the landmark
             self.draw_landmark(pos_in_scene)
 
-    def draw_landmark(self, position):
-        # Set the color and size for the landmarks
-        color = QColor(255, 0, 0)  # Red
-        radius = 5
-        # Convert mouse position to scene coordinates
+    def draw_landmark(self, position, redraw=False):
+        if len(self.image1_dims) > 0  and len(self.image2_dims > 0):
+            # Set the color and size for the landmarks
+            color = QColor(255, 0, 0)  # Red
+            radius = 5
+            # Convert mouse position to scene coordinates
 
-        # Get the width of the first image
-        image_1_width = self.image1_dims[0]
+            # Get the width of the first image
+            image_1_width = self.image1_dims[0]
 
-        # Determine which image the landmark belongs to
-        if position.x() < image_1_width:
-            # Landmark is in the first image
-            image_index = 1
-            landmark_item = self.scene.addEllipse(
-                position.x(),
-                position.y(),
-                radius,
-                radius,
-                QPen(color),
-                QBrush(color)
-            )
-            self.landmarks['image1'].append({'x': position.x(), 'y': position.y()})
+            # Determine which image the landmark belongs to
+            if position.x() < image_1_width:
+                # Landmark is in the first image
+                image_index = 1
+                landmark_item = self.scene.addEllipse(
+                    position.x(),
+                    position.y(),
+                    radius,
+                    radius,
+                    QPen(color),
+                    QBrush(color)
+                )
+                if not redraw:
+                    self.landmarks['image1'].append({'x': position.x(), 'y': position.y()})
+            else:
+                # Landmark is in the second image
+                image_index = 2
+                landmark_item = self.scene.addEllipse(
+                    position.x(),
+                    position.y(),
+                    radius,
+                    radius,
+                    QPen(color),
+                    QBrush(color)
+                )
+                if not redraw:
+                    self.landmarks['image2'].append({'x': position.x() - image_1_width, 'y': position.y()})
+
+            # Store the landmark position
+            self.scene.addItem(landmark_item)
+
+            # Add a label indicating the index of the landmark with a small box
+            label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 10, 30, 20, QPen(),
+                                            QBrush(Qt.white))
+            label = self.scene.addText(f"{image_index}.{len(self.landmarks[f'image{image_index}'])}")
+            label.setPos(position.x() - radius / 2 + 3, position.y() - radius / 2 - 11)
+            self.update_landmark_list()
         else:
-            # Landmark is in the second image
-            image_index = 2
-            landmark_item = self.scene.addEllipse(
-                position.x(),
-                position.y(),
-                radius,
-                radius,
-                QPen(color),
-                QBrush(color)
-            )
-            self.landmarks['image2'].append({'x': position.x() - image_1_width, 'y': position.y()})
-
-        # Store the landmark position
-        self.scene.addItem(landmark_item)
-
-        # Add a label indicating the index of the landmark with a small box
-        # label_rect = self.scene.addRect(position.x() - radius / 2, position.y() - radius / 2 - 10, 30, 20, QPen(),
-        #                                QBrush(Qt.white))
-        label = self.scene.addText(f"{image_index}.{len(self.landmarks[f'image{image_index}'])}")
-        # label.setPos(position.x() - radius / 2 + 3, position.y() - radius / 2 - 11)
-        self.update_landmark_list()
+            QMessageBox.critical(self, f"No images opened",f"Please load image 1 and image2", QMessageBox.Ok,
+                                 QMessageBox.Ok)
 
     def update_landmark_list(self):
         # Clear the existing items in the list widget
@@ -259,6 +309,8 @@ class OverlayWindow(QWidget):
         layout = QVBoxLayout(self)
         layout.addWidget(self.image_label)
         self.setWindowTitle("Image Overlay")
+        # Add a QSizeGrip for window resizing
+        size_grip = QSizeGrip(self)
         self.setFixedSize(1280, 720)
 
     def set_images_with_landmarks(self, image_1, image_2, landmarks_data, alpha=0.5):
